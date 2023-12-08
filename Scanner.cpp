@@ -98,13 +98,20 @@ public:
     void addToken(TokenType type, const std::string& lexeme) {
         tokens.emplace_back(type, lexeme);
     }
-
+    
+    /**
+     * Skips whitespaces in the source code.
+     */
     void skipWhiteSpace() {
         while (std::isspace(source[current])) {
             current++;
         }
     }
     
+    /**
+     * Tokenizes the entire source code.
+     * @return Vector containing the generated tokens.
+     */
     std::vector<Token> tokenize() {
         while (current < source.length()) {
             start = current;
