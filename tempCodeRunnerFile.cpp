@@ -1,1 +1,0 @@
-(P AND Q) OR NOT (P IMPLIES Q)
