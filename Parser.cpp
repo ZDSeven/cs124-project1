@@ -1,159 +1,164 @@
-Parser 
-current = 0
-tokens
+#include <iostream>
+#include <vector>
+#include <string>
+#include "scanner.cpp"
 
-match(TokenType type) -> bool { 
-  If (tokens[current].type == type) { 
-     Current += 1 
-     Return true 
-  }
-  Return false 
-}
+class Sentence {
+public:
+    virtual bool evaluate() const = 0;
+};
 
-Primary -> Negated Sentence  | Atomic 
+class ComplexSentence : public Sentence {
+private:
+    Sentence* left;
+    TokenType connective;
+    Sentence* right;
 
+public:
+    ComplexSentence(Sentence* left, TokenType connective, Sentence* right)
+        : left(left), connective(connective), right(right) {}
 
+    bool evaluate() const override {
+        switch (connective) {
+            case TokenType::And:
+                return left->evaluate() && right->evaluate();
+            case TokenType::Or:
+                return left->evaluate() || right->evaluate();
+            case TokenType::Implies:
+                return !left->evaluate() || right->evaluate();
+            case TokenType::Equivalent:
+                return (left->evaluate() && right->evaluate()) || (!left->evaluate() && !right->evaluate());
+            default:
+                //Unknown Connective
+                return false;
+        }
+    }
+};
 
-AND
-OR
-IMPLIES
-EQUIVALENT
+class AtomicSentence : public Sentence {
+private:
+    std::string identifier;
 
-P EQUIVALENT Q IMPLIES S AND T
+public:
+    AtomicSentence(const std::string& identifier) : identifier(identifier) {}
 
-parseSentence() -> Sentence 
-  -> parseCompound() 
+    bool evaluate() const override {
+        // Return identifier value
+    }
+};
 
-parseCompound() 
-   Return parseEquvalent()
+class NegatedSentence : public Sentence {
+private:
+    Sentence* innerSentence;
 
+public:
+    NegatedSentence(Sentence* innerSentence) : innerSentence(innerSentence) {}
 
-parseEquivalent() 
- // P
-   expr = parseImplies() 
+    bool evaluate() const override {
+        return !innerSentence->evaluate();
+    }
+};
 
-    While (match(Equivalent) {  
-       Operator = previous(); 
-       Right = parseImplies();
-      // P EQUIVALENT  (Q IMPLIES (S AND T))
-       Expr = CompoundSentence(expr,  operator, right);
- } 
- Return expr;
-}
+class Parser {
+private:
+    const std::vector<Token>& tokens;
+    size_t current = 0;
 
+public:
+    Parser(const std::vector<Token>& tokens) : tokens(tokens) {}
 
+    bool match(TokenType type) {
+        if (tokens[current].type == type) {
+            current ++;
+            return true;
+        }
+        return false;
+    }
 
-parseImplies() 
- // Q
-   Expr = parseOr(); 
+    Sentence* parseSentence() {
+        return parseComplex();
+    }
 
-   While (match(Implies)) { 
-   Operator = previous();  
-    // S AND T
-    Right = parseOr();
-    Expr = Compound(expr, operator, right);
-  } 
-} 
+    Sentence* parseComplex() {
+        Sentence* expr = parseEquivalent();
 
- } 
-… 
+        while (match(TokenType::And) || match(TokenType::Or)) {
+            TokenType connective = tokens[current - 1].type;
+            Sentence* right = parseEquivalent();
+            expr = new ComplexSentence(expr, connective, right);
+        }
 
-parseOr() {  
-Expr = parseAnd(); 
+        return expr;
+    }
 
- While (match(Or) {  
-       Operator = advance(); 
-       Right = parseAnd();
-       Expr = CompoundSentence(expr,  operator, right);
- } 
-Return expr;
-}
+    Sentence* parseEquivalent() {
+        Sentence* expr = parseImplies();
 
-parseAnd() {  
+        while (match(TokenType::Equivalent)) {
+            TokenType connective = tokens[current - 1].type;
+            Sentence* right = parseImplies();
+            expr = new ComplexSentence(expr, connective, right);
+        }
 
-// S
-Expr = parsePrimary(); 
+        return expr;
+    }
 
- While (match(And) {  
-       Operator = advance(); 
-       // T
-       Right = parsePrimary();
-       Expr = CompoundSentence(expr,  operator, right);
- } 
-Return expr;
-}
+    Sentence* parseImplies() {
+        Sentence* expr = parseOr();
 
-Primary := Grouped | Negated | Variable | True | False
+        while (match(TokenType::Implies)) {
+            TokenType connective = tokens[current - 1].type;
+            Sentence* right = parseOr();
+            expr = new ComplexSentence(expr, connective, right);
+        }
 
-parsePrimary() { 
-  If (match(LeftParent)) {  
-   Return parseGrouped();
- } 
+        return expr;
+    }
 
-If (match(Not)) {
-  Return parseNegated();
-}
+    Sentence* parseOr() {
+        Sentence* expr = parseAnd();
 
+        while (match(TokenType::Or)) {
+            TokenType connective = tokens[current - 1].type;
+            Sentence* right = parseAnd();
+            expr = new ComplexSentence(expr, connective, right);
+        }
 
+        return expr;
+    }
 
-Return parseAtomic();
-}
+    Sentence* parseAnd() {
+        Sentence* expr = parsePrimary();
 
-parseAtomic() -> Sentence { 
-  If (match(True) or match(False)) {   
-   Return Value(previous());
-}
- If (match(Variable) { 
-   Return Variable(previous());
-}
-Return error
-}
+        while (match(TokenType::And)) {
+            TokenType connective = tokens[current - 1].type;
+            Sentence* right = parsePrimary();
+            expr = new ComplexSentence(expr, connective, right);
+        }
 
-parseGrouped() -> Sentence {
-  sentenceInside = parseSentence();
-  If (not match(RightParen) { 
-    Raise Error();
-} 
-  Return Grouped(sentenceInside);
-}
+        return expr;
+    }
 
-P IMPLIES Q AND S
-( P IMPLIES Q) AND S
+    Sentence* parsePrimary() {
+        if (match(TokenType::O_Paren)) {
+            Sentence* innerSentence = parseComplex();
+            if (!match(TokenType::C_Paren)) {
+                // Error no closing parenthesis
+                return nullptr;
+            }
+            return innerSentence;
+        }
 
--> Sentence 
+        if (match(TokenType::Not)) {
+            Sentence* innerSentence = parsePrimary();
+            return new NegatedSentence(innerSentence);
+        }
 
-class Sentence { 
+        if (match(TokenType::Identifier)) {
+            return new AtomicSentence(tokens[current - 1].lexeme);
+        }
 
-  virtual void evaluate() {}
-
-}
-
-
-class CompoundSentence : Sentence { 
-
-   Void evaluate() override { }
-}
-
-class NegatedSentence : Sentence { 
-
-   Void evaluate() override { 
-
-   }
-}
-
-class AtomicSentence : Sentence { 
-
-   Void evaluate() override { }
-}
-
-vector<Sentence> sentences; 
-
-sentences.push_back(AtomicSentence());
-sentences.push_back(NegatedSentence());
-
-
-
-
-
-
-
+        // Unknown token
+        return nullptr;
+    }
+};
