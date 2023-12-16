@@ -54,8 +54,7 @@ parseImplies()
     Expr = Compound(expr, operator, right);
   } 
 } 
-
- } 
+t
 … 
 
 parseOr() {  
