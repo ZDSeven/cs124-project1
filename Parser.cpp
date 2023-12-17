@@ -9,6 +9,7 @@
 class Sentence {
 public:
     virtual bool evaluate() const = 0;
+    virtual void printParseTree(int indent) const = 0;
 };
 
 /**
@@ -47,6 +48,12 @@ public:
                 return false;
         }
     }
+
+    void printParseTree(int indent) const override {
+        std::cout << std::string(indent, ' ') << "ComplexSentence (" << static_cast<int>(connective) << ")\n";
+        left->printParseTree(indent + 2);
+        right->printParseTree(indent + 2);
+    }
 };
 /**
  * @brief Concrete class representing an atomic sentence
@@ -76,6 +83,10 @@ public:
             return false;
         }
     }
+
+    void printParseTree(int indent) const override {
+        std::cout << std::string(indent, ' ') << "AtomicSentence (" << identifier << ")\n";
+    }
 };
 
 class NegatedSentence : public Sentence {
@@ -97,6 +108,11 @@ public:
      */
     bool evaluate() const override {
         return !innerSentence->evaluate();
+    }
+
+    void printParseTree(int indent) const override {
+        std::cout << std::string(indent, ' ') << "NegatedSentence\n";
+        innerSentence->printParseTree(indent + 2);
     }
 };
 /**
@@ -260,3 +276,7 @@ public:
         return nullptr;
     }
 };
+
+void printParseTree(const Sentence* sentence, int indent) {
+    sentence->printParseTree(indent);
+}
