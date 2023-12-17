@@ -28,8 +28,8 @@ int main(int argc, char* argv[]) {
         Sentence* parsedSentence = parser.parseSentence();
 
         // Print the truth table with the logical expression in the header
-        std::cout << "\nTruth Table for " << line << ":\n";
-        std::vector<std::string> variables = parser.getVariables(); // Get the variables used in the expression
+        std::cout << "\nTruth Table:\n";
+        std::vector<std::string> variables = {"P", "Q"}; // Add more variables as needed
         printTruthTable(variables, parsedSentence, line);
 
         // Clean up

@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include "scanner.cpp"
-#include "evaluator.cpp"
+
 
 /**
  * @brief Abstract base class representing a logical sentence
@@ -62,7 +62,7 @@ public:
 class AtomicSentence : public Sentence {
 private:
     std::string identifier;
-    Evaluator* evaluator;
+    static std::unordered_map<std::string, bool> booleanValues;
 
 public:
     /**
@@ -72,24 +72,37 @@ public:
     AtomicSentence(const std::string& identifier) : identifier(identifier) {}
 
     /**
-     * @brief Evaluates the atomic sentence (to be implemented)
+     * @brief Get the boolean value for an identifier (to be implemented)
+     * @param identifier The identifier for which to retrieve the boolean value
+     * @return Boolean value corresponding to the identifier
+     */
+    static bool getBooleanValue(const std::string& identifier) {
+        auto it = booleanValues.find(identifier);
+        return (it != booleanValues.end()) ? it->second : false;
+    }
+
+    /**
+     * @brief Set the boolean value for an identifier
+     * @param identifier The identifier for which to set the boolean value
+     * @param value The boolean value to set
+     */
+    static void setBooleanValue(const std::string& identifier, bool value) {
+        booleanValues[identifier] = value;
+    }
+
+    /**
+     * @brief Evaluates the atomic sentence
      * @return Result of the evaluation
      */
     bool evaluate() const override {
-        // Return identifier value
-        if (identifier == "P"){
-            return true;
-        } else if (identifier == "Q"){
-            return true;
-        } else{
-            return false;
-        }
+        return getBooleanValue(identifier);
     }
 
     void printParseTree(int indent) const override {
         std::cout << std::string(indent, ' ') << "AtomicSentence (" << identifier << ")\n";
     }
 };
+std::unordered_map<std::string, bool> AtomicSentence::booleanValues;
 
 class NegatedSentence : public Sentence {
 private:

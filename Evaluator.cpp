@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 #include "parser.cpp"
 
 class Evaluator {
@@ -17,7 +16,7 @@ public:
     }
 };
 
-void printTruthTable(const std::vector<std::string>& variables, const Sentence* root) {
+void printTruthTable(const std::vector<std::string>& variables, const Sentence* root, const std::string& logicalExpression) {
     // Calculate the number of rows in the truth table
     int numRows = 1 << variables.size(); // 2^n rows for n variables
 
@@ -25,7 +24,7 @@ void printTruthTable(const std::vector<std::string>& variables, const Sentence* 
     for (const std::string& variable : variables) {
         std::cout << variable << "\t";
     }
-    std::cout << "Result\n";
+    std::cout << logicalExpression << "\n"; // Include the logical expression in the header
 
     // Iterate through all possible truth values
     for (int i = 0; i < numRows; ++i) {
@@ -44,7 +43,7 @@ void printTruthTable(const std::vector<std::string>& variables, const Sentence* 
     }
 }
 
-int main() {
+/* int main() {
     // Example logical expression: "P AND Q"
     std::string sourceCode = "P AND Q";
 
@@ -69,4 +68,4 @@ int main() {
     delete parsedSentence;
 
     return 0;
-}
+} */
