@@ -257,6 +257,8 @@ public:
         if (match(TokenType::O_Paren)) {
             Sentence* innerSentence = parseComplex();
             if (!match(TokenType::C_Paren)) {
+                std::cerr << "Error: Unclosed Parenthesis. Add the appropriate closed parenthesis.\n";
+                delete innerSentence;
                 // Error no closing parenthesis
                 return nullptr;
             }
@@ -265,14 +267,23 @@ public:
 
         if (match(TokenType::Not)) {
             Sentence* innerSentence = parsePrimary();
+            if (!innerSentence) {
+                std::cerr << "Error: Missing Proposition. Please add an appropriate proposition after 'NOT'.\n";
+                return nullptr;
+            }
             return new NegatedSentence(innerSentence);
         }
 
         if (match(TokenType::Identifier)) {
+            if (identifier != "P" && identifier != "Q" && identifier != "S") {
+                std::cerr << "Error: Invalid Proposition. Please only use valid propositions which are P, Q, or S.\n";
+                return nullptr;
+            }
             return new AtomicSentence(tokens[current - 1].lexeme);
         }
 
         // Unknown token
+        std::cerr << "Error: Invalid Operator. Please check the spelling of the operators or check the BNF grammar in the documentation.\n";
         return nullptr;
     }
 };
