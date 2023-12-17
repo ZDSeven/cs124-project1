@@ -44,7 +44,7 @@ public:
             case TokenType::Equivalent:
                 return (left->evaluate() && right->evaluate()) || (!left->evaluate() && !right->evaluate());
             default:
-                //Unknown Connective
+                std::cerr << "Unknown Connective" << std::endl;
                 return false;
         }
     }
@@ -275,7 +275,7 @@ public:
         }
 
         if (match(TokenType::Identifier)) {
-            if (identifier != "P" && identifier != "Q" && identifier != "S") {
+            if (tokens[current - 1].lexeme != "P" && tokens[current - 1].lexeme != "Q") {
                 std::cerr << "Error: Invalid Proposition. Please only use valid propositions which are P, Q, or S.\n";
                 return nullptr;
             }
