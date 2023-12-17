@@ -259,7 +259,6 @@ public:
             if (!match(TokenType::C_Paren)) {
                 std::cerr << "Error: Unclosed Parenthesis. Add the appropriate closed parenthesis.\n";
                 delete innerSentence;
-                // Error no closing parenthesis
                 return nullptr;
             }
             return innerSentence;
