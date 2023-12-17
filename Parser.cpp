@@ -274,7 +274,8 @@ public:
         }
 
         if (match(TokenType::Identifier)) {
-            if (tokens[current - 1].lexeme != "P" && tokens[current - 1].lexeme != "Q") {
+            std::string identifier = tokens[current - 1].lexeme;
+            if (identifier != "P" && identifier != "Q" && identifier != "S") {
                 std::cerr << "Error: Invalid Proposition. Please only use valid propositions which are P, Q, or S.\n";
                 return nullptr;
             }
