@@ -14,5 +14,17 @@ int main() {
         std::cout << "Type: " << static_cast<int>(token.type) << ", Lexeme: " << token.lexeme << "\n";
     }
 
+    Parser parser(tokens);
+    Sentence* parsedSentence = parser.parseSentence();
+
+    if (parsedSentence) {
+        std::cout << "\nParse Tree:\n";
+        printParseTree(parsedSentence, 0);
+    } else {
+        std::cerr << "Error: Unable to parse the sentence.\n";
+    }
+
+    delete parsedSentence;
+
     return 0;
 }
