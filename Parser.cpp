@@ -68,6 +68,13 @@ public:
      */
     bool evaluate() const override {
         // Return identifier value
+        if (identifier == "TRUE"){
+            return true;
+        } else if (identifier == "FALSE"){
+            return false;
+        } else{
+            return false;
+        }
     }
 };
 
