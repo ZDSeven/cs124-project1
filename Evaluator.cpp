@@ -42,30 +42,3 @@ void printTruthTable(const std::vector<std::string>& variables, const Sentence* 
         std::cout << std::boolalpha << result << "\n";
     }
 }
-
-/* int main() {
-    // Example logical expression: "P AND Q"
-    std::string sourceCode = "P AND Q";
-
-    // Create a scanner and tokenize the source code
-    Scanner scanner(sourceCode);
-    std::vector<Token> tokens = scanner.tokenize();
-
-    // Create a parser and parse the logical expression
-    Parser parser(tokens);
-    Sentence* parsedSentence = parser.parseSentence();
-
-    // Print the parse tree
-    std::cout << "\nParse Tree:\n";
-    printParseTree(parsedSentence, 0);
-
-    // Print the truth table
-    std::cout << "\nTruth Table:\n";
-    std::vector<std::string> variables = {"P", "Q"}; // Add more variables as needed
-    printTruthTable(variables, parsedSentence);
-
-    // Clean up
-    delete parsedSentence;
-
-    return 0;
-} */
