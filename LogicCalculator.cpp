@@ -3,7 +3,6 @@
 #include <vector>
 #include <unordered_map>
 #include "Parser.cpp"
-#include "scanner.cpp"
 
 int main() {
     std::string sampleSentence = "(P AND Q) OR NOT Q";
