@@ -17,12 +17,12 @@ bool evaluateLogicalExpression(bool P, bool Q, bool S) {
 }
 
 // Function to generate and display the logic table
-void generateLogicTable() {
+void evaluate(int n) {
     // Print header based on the value of n
-    // DETECT THE NUMBER OF N
-    // DETECT WHAT TO PRINT IN THE TITLE
+    // TODO DETECT THE NUMBER OF N
+    // TODO DETECT WHAT TO PRINT IN THE TITLE
     if (n == 1) {
-        std::cout << "   " << Proposition  << " |  Result" << std::endl;
+        std::cout << "   P  |  Result" << std::endl;
         std::cout << "----------------" << std::endl;
     } else if (n == 2) {
         std::cout << "   P  |   Q   | Result" << std::endl;
@@ -31,7 +31,7 @@ void generateLogicTable() {
         std::cout << "   P  |   Q   |   S   | Result" << std::endl;
         std::cout << "-------------------------------" << std::endl;
     } 
-    //EVALUATION OF LOGICAL EXPRESSION
+    // TODO! EVALUATION OF LOGICAL PROPOSITION
     // Print logic table based on the value of n
     if (n == 1) {
         for (bool p : {true, false}) {
