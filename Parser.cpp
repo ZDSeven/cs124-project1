@@ -144,6 +144,10 @@ public:
         while (match(TokenType::And) || match(TokenType::Or)) {
             TokenType connective = tokens[current - 1].type;
             Sentence* right = parseEquivalent();
+            if (!right) { /*missing right operand*/
+                delete expr;
+                return nullptr;
+            }
             expr = new ComplexSentence(expr, connective, right);
         }
 
@@ -160,6 +164,10 @@ public:
         while (match(TokenType::Equivalent)) {
             TokenType connective = tokens[current - 1].type;
             Sentence* right = parseImplies();
+            if (!right) { /*missing right operand*/
+                delete expr;
+                return nullptr;
+            }
             expr = new ComplexSentence(expr, connective, right);
         }
 
@@ -176,6 +184,10 @@ public:
         while (match(TokenType::Implies)) {
             TokenType connective = tokens[current - 1].type;
             Sentence* right = parseOr();
+            if (!right) { /*missing right operand*/
+                delete expr;
+                return nullptr;
+            }
             expr = new ComplexSentence(expr, connective, right);
         }
 
@@ -192,6 +204,10 @@ public:
         while (match(TokenType::Or)) {
             TokenType connective = tokens[current - 1].type;
             Sentence* right = parseAnd();
+            if (!right) { /*missing right operand*/
+                delete expr;
+                return nullptr;
+            }
             expr = new ComplexSentence(expr, connective, right);
         }
 
@@ -208,6 +224,10 @@ public:
         while (match(TokenType::And)) {
             TokenType connective = tokens[current - 1].type;
             Sentence* right = parsePrimary();
+            if (!right) { /*missing right operand*/
+                delete expr;
+                return nullptr;
+            }
             expr = new ComplexSentence(expr, connective, right);
         }
 
