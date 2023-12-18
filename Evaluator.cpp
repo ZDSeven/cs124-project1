@@ -1,8 +1,6 @@
 #include <iostream>
 #include "parser.cpp"
-/**
- * @brief Represents a truth value evaluator for logical expressions.
- */
+
 class Evaluator {
     /**
      * @brief Sets the truth value for a variable.
